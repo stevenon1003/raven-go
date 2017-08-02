@@ -1,10 +1,6 @@
-# raven 
+# raven
 
-[![Build Status](https://api.travis-ci.org/getsentry/raven-go.svg?branch=master)](https://travis-ci.org/getsentry/raven-go)
-[![Go Report Card](https://goreportcard.com/badge/github.com/getsentry/raven-go)](https://goreportcard.com/report/github.com/getsentry/raven-go)
-[![GoDoc](https://godoc.org/github.com/getsentry/raven-go?status.svg)](https://godoc.org/github.com/getsentry/raven-go)
-
-raven is the official Go SDK for the [Sentry](https://github.com/getsentry/sentry)
+raven is a Go client for the [Sentry](https://github.com/getsentry/sentry)
 event/error logging system.
 
 - [**API Documentation**](https://godoc.org/github.com/getsentry/raven-go)
@@ -12,7 +8,7 @@ event/error logging system.
 
 ## Fork information
 This repo is forked from [Sentry Client in Go](https://github.com/getsentry/raven-go) 
-commit : [d175f85701dfbf44cb0510114c9943e665e60907](https://github.com/getsentry/raven-go/commit/d175f85701dfbf44cb0510114c9943e665e60907)
+commit : [263040ce1a362270b5897a5982572ddc1fe807be](https://github.com/getsentry/raven-go/commit/263040ce1a362270b5897a5982572ddc1fe807be)
 
 ## Objective
 Official Sentry Client in Go doesn't support LEVEL definition such as DEBUG, INFO, WARNING, ERROR or FATAL. 
@@ -27,10 +23,13 @@ go get github.com/stevenon1003/raven-go
 If you use dep, type following after `go get`
 
 ```
-dep ensure github.com/stevenon1003/raven-go@sentry-level
+dep ensure -add github.com/stevenon1003/raven-go
 ```
-
 ## How to use
+
+Function name: `raven.CaptureErrorAndWaitWithLevel` `raven.CaptureErrorWithLevel`
+
+Severity: `raven.DEBUG` `raven.INFO` `raven.WARNING` `raven.ERROR` `raven.FATAL`
 
 ```
 package main
@@ -41,10 +40,13 @@ func init() {
     raven.SetDSN("https://xxxx:yyyy@sentry.io/zzzzzz")
 }
 
+//Blocking call 
 f, err := os.Open("filename.ext")
 if err != nil {
-    raven.CaptureErrorAndWaitWithLevel(err, nil, 'WARNING')
+    raven.CaptureErrorAndWaitWithLevel(err, nil, raven.WARNING)
     log.Panic(err)
 }
-```
 
+//non-blocking call
+raven.CaptureErrorWithLevel(err, nil, raven.INFO)
+```
