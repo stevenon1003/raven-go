@@ -756,10 +756,39 @@ func (client *Client) CaptureError(err error, tags map[string]string, interfaces
 	return eventID
 }
 
+// Added by Steven On on 2017-08-02
+// CaptureErrorWithLevel formats and delivers an error to the Sentry server.
+// Adds a stacktrace to the packet, excluding the call to this method.
+func (client *Client) CaptureErrorWithLevel(err error, tags map[string]string, level Severity, interfaces ...Interface) string {
+	if client == nil {
+		return ""
+	}
+
+	if client.shouldExcludeErr(err.Error()) {
+		return ""
+	}
+
+	packet := NewPacket(err.Error(), append(append(interfaces, client.context.interfaces()...), NewException(err, NewStacktrace(1, 3, client.includePaths)))...)
+	if level != "" {
+		packet.Level = level
+	}
+	eventID, _ := client.Capture(packet, tags)
+
+	return eventID
+}
+
 // CaptureError formats and delivers an error to the Sentry server using the default *Client.
 // Adds a stacktrace to the packet, excluding the call to this method.
 func CaptureError(err error, tags map[string]string, interfaces ...Interface) string {
 	return DefaultClient.CaptureError(err, tags, interfaces...)
+}
+
+// Added by Steven On on 2017-08-02
+// CaptureErrorWithLevel formats and delivers an error to the Sentry server using the default *Client.
+// Adds a stacktrace to the packet, excluding the call to this method.
+// It supports LEVEL definition
+func CaptureErrorWithLevel(err error, tags map[string]string, level Severity, interfaces ...Interface) string {
+	return DefaultClient.CaptureErrorWithLevel(err, tags, level, interfaces...)
 }
 
 // CaptureErrorAndWait is identical to CaptureError, except it blocks and assures that the event was sent
@@ -784,9 +813,36 @@ func (client *Client) CaptureErrorAndWait(err error, tags map[string]string, int
 	return eventID
 }
 
+// Added by Steven On on 2017-08-02, custom function with sentry LEVEL parameter
+// CaptureErrorAndWaitWithLevel is identical to CaptureErrorAndWait, except this supports LEVEL definition
+func (client *Client) CaptureErrorAndWaitWithLevel(err error, tags map[string]string, level Severity, interfaces ...Interface) string {
+	if client == nil {
+		return ""
+	}
+
+	if client.shouldExcludeErr(err.Error()) {
+		return ""
+	}
+
+	packet := NewPacket(err.Error(), append(append(interfaces, client.context.interfaces()...), NewException(err, NewStacktrace(1, 3, client.includePaths)))...)
+	if level != "" {
+		packet.Level = level
+	}
+	eventID, ch := client.Capture(packet, tags)
+	<-ch
+
+	return eventID
+}
+
 // CaptureErrorAndWait is identical to CaptureError, except it blocks and assures that the event was sent
 func CaptureErrorAndWait(err error, tags map[string]string, interfaces ...Interface) string {
 	return DefaultClient.CaptureErrorAndWait(err, tags, interfaces...)
+}
+
+// Added by Steven On on 2017-08-02, custom function with sentry LEVEL parameter
+// CaptureErrorAndWaitWithLevel is identical to CaptureErrorAndWait, except this supports LEVEL definition
+func CaptureErrorAndWaitWithLevel(err error, tags map[string]string, level Severity, interfaces ...Interface) string {
+	return DefaultClient.CaptureErrorAndWaitWithLevel(err, tags, level, interfaces...)
 }
 
 // CapturePanic calls f and then recovers and reports a panic to the Sentry server if it occurs.
