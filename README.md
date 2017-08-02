@@ -27,6 +27,10 @@ dep ensure github.com/stevenon1003/raven-go@sentry-level
 ```
 ## How to use
 
+Function name: `raven.CaptureErrorAndWaitWithLevel` `raven.CaptureErrorWithLevel`
+
+Severity: `raven.DEBUG` `raven.INFO` `raven.WARNING` `raven.ERROR` `raven.FATAL`
+
 ```
 package main
 
@@ -36,9 +40,13 @@ func init() {
     raven.SetDSN("https://xxxx:yyyy@sentry.io/zzzzzz")
 }
 
+//Blocking call 
 f, err := os.Open("filename.ext")
 if err != nil {
-    raven.CaptureErrorAndWaitWithLevel(err, nil, 'WARNING')
+    raven.CaptureErrorAndWaitWithLevel(err, nil, raven.WARNING)
     log.Panic(err)
 }
+
+//non-blocking call
+raven.CaptureErrorWithLevel(err, nil, raven.INFO)
 ```
