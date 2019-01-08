@@ -8,7 +8,7 @@ event/error logging system.
 
 ## Fork information
 This repo is forked from [Sentry Client in Go](https://github.com/getsentry/raven-go) 
-commit : [263040ce1a362270b5897a5982572ddc1fe807be](https://github.com/getsentry/raven-go/commit/263040ce1a362270b5897a5982572ddc1fe807be)
+commit : [d5057ceb70caa73feca9ba5d75a8fc00c9dd0aae](https://github.com/getsentry/raven-go/commit/d5057ceb70caa73feca9ba5d75a8fc00c9dd0aae)
 
 ## Objective
 Official Sentry Client in Go doesn't support LEVEL definition such as DEBUG, INFO, WARNING, ERROR or FATAL. 
